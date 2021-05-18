@@ -26,7 +26,8 @@ int main(int argc, char *argv[])
     double c5_in=0.5;
     double ml_in=0.001;
     double ms_in=0.01;
-    std::string conf_name_in="test";
+    std::string path_conf_in = "" ;
+    std::string conf_name_in="unit";
     double conf_number_in =  1000;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
@@ -53,6 +54,9 @@ int main(int argc, char *argv[])
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             }
+          if(std::string(argv[i]) == "-path_conf"){
+            std::stringstream ss(argv[i+1]); ss >> path_conf_in;
+            }
         }
     // Show additional input parameters
     LOG(Message) << "Ls = " << Ls_in << std::endl;
@@ -61,6 +65,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "c5 = " << c5_in << std::endl;
     LOG(Message) << "ml = " << ml_in << std::endl;
     LOG(Message) << "ms = " << ms_in << std::endl;
+    LOG(Message) << "conf_path = " << path_conf_in << std::endl;
     LOG(Message) << "conf_name = " << conf_name_in << std::endl;
     LOG(Message) << "conf_number = " << conf_number_in << std::endl;
 
@@ -79,7 +84,22 @@ int main(int argc, char *argv[])
     globalPar.runId             = conf_name_in;
     application.setPar(globalPar);
     // gauge field
-    application.createModule<MGauge::Unit>("gauge");
+
+    if(conf_name_in != "unit"){
+        LOG(Message) << "Use nersc configuration" << std::endl;
+	MIO::LoadNersc::Par loadnerscpar;
+        // the dot and confnumber are added in the LoadNersc module
+        loadnerscpar.file =  path_conf_in + "/" + conf_name_in;
+        //std::cout << loadnerscpar.file << std::endl;
+        application.createModule<MIO::LoadNersc>("gauge",loadnerscpar);
+
+    }
+    else
+    { 
+       LOG(Message) << "Use unit configuration" << std::endl;
+       application.createModule<MGauge::Unit>("gauge");
+    }
+    
     // sources
     MSource::Point::Par ptPar;
     ptPar.position = "0 0 0 0";
