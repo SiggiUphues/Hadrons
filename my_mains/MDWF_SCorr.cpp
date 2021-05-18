@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     {
         MContraction::SMeson::Par smesPar;
 
-        smesPar.output  = "smesons/pt_" + flavour[i] + flavour[j];
+        smesPar.output  = "smesons/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
         smesPar.q1      = "Qpt_" + flavour[i];
         smesPar.q2      = "Qpt_" + flavour[j];
         smesPar.gammas  = "all";
