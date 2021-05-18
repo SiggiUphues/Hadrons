@@ -78,11 +78,11 @@ int main(int argc, char *argv[])
     {
         MContraction::Meson::Par mesPar;
 
-        smesPar.output  = "tmesons/pt_" + flavour[i] + flavour[j];
-        smesPar.q1      = "Qpt_" + flavour[i];
-        smesPar.q2      = "Qpt_" + flavour[j];
-        smesPar.gammas  = "all";
-        smesPar.sink    = "sink";
+        mesPar.output  = "tmesons/pt_" + flavour[i] + flavour[j];
+        mesPar.q1      = "Qpt_" + flavour[i];
+        mesPar.q2      = "Qpt_" + flavour[j];
+        mesPar.gammas  = "all";
+        mesPar.sink    = "sink";
         application.createModule<MContraction::Meson>("tmeson_pt_"
                                                       + flavour[i] + flavour[j],
                                                       mesPar);
