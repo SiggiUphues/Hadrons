@@ -18,17 +18,59 @@ int main(int argc, char *argv[])
     HadronsLogDebug.Active(GridLogDebug.isActive());
     LOG(Message) << "Grid initialized" << std::endl;
 
+    // Set additional input parameters
+    // default values
+    int Ls_in=12;
+    double M5_in=1.8;
+    double b5_in=1.5;
+    double c5_in=0.5;
+    double ml_in=0.001;
+    double ms_in=0.01;
+    std::string conf_name_in="test";
+    double conf_number_in =  1000;
+    for(int i=0;i<argc;i++){
+          if(std::string(argv[i]) == "-Ls"){
+            std::stringstream ss(argv[i+1]); ss >> Ls_in;
+            }
+          if(std::string(argv[i]) == "-M5"){
+            std::stringstream ss(argv[i+1]); ss >> M5_in;
+            }
+          if(std::string(argv[i]) == "-b5"){
+            std::stringstream ss(argv[i+1]); ss >> b5_in;
+            }
+          if(std::string(argv[i]) == "-c5"){
+            std::stringstream ss(argv[i+1]); ss >> c5_in;
+            }
+          if(std::string(argv[i]) == "-conf_name"){
+            std::stringstream ss(argv[i+1]); ss >> conf_name_in;
+            }
+          if(std::string(argv[i]) == "-conf_number"){
+            std::stringstream ss(argv[i+1]); ss >> conf_number_in;
+            }
+        }
+    // Show additional input parameters
+    LOG(Message) << "Ls = " << Ls_in << std::endl;
+    LOG(Message) << "M5 = " << M5_in << std::endl;
+    LOG(Message) << "b5 = " << b5_in << std::endl;
+    LOG(Message) << "c5 = " << c5_in << std::endl;
+    LOG(Message) << "ml = " << ml_in << std::endl;
+    LOG(Message) << "ms = " << ms_in << std::endl;
+    LOG(Message) << "conf_name = " << conf_name_in << std::endl;
+    LOG(Message) << "conf_number = " << conf_number_in << std::endl;
+
+
+
     // run setup ///////////////////////////////////////////////////////////////
     Application              application;
-    std::vector<std::string> flavour = {"z"/* ,"l", "s", "c1", "c2", "c3"*/};
-    std::vector<double>      mass    = {0.1/* ,.01, .04, .2  , .25 , .3*/  };
+    std::vector<std::string> flavour = {"l", "s" /* ,"l", "s", "c1", "c2", "c3"*/};
+    std::vector<double>      mass    = {ml_in, ms_in /* ,.01, .04, .2  , .25 , .3*/  };
 
     // global parameters
     Application::GlobalPar globalPar;
-    globalPar.trajCounter.start = 1500;
-    globalPar.trajCounter.end   = 1520;
-    globalPar.trajCounter.step  = 20;
-    globalPar.runId             = "test";
+    globalPar.trajCounter.start = conf_number_in;
+    globalPar.trajCounter.end   = conf_name_in + 1;
+    globalPar.trajCounter.step  = 1;
+    globalPar.runId             = conf_name_in;
     application.setPar(globalPar);
     // gauge field
     application.createModule<MGauge::Unit>("gauge");
@@ -50,10 +92,10 @@ int main(int argc, char *argv[])
         // actions
         MAction::MobiusDWF::Par actionPar;
         actionPar.gauge = "gauge";
-        actionPar.Ls    = 12 ;
-        actionPar.M5    = 1.8 ;
-        actionPar.b     = 1 ;
-        actionPar.c     =0.5 ;
+        actionPar.Ls    = Ls_in ;
+        actionPar.M5    = M5_in ;
+        actionPar.b     = b5_in ;
+        actionPar.c     = c5_in ;
         actionPar.mass  = mass[i];
         actionPar.boundary = boundary;
         actionPar.twist = twist;
