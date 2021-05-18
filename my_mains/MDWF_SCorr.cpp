@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     // Set additional input parameters
     // default values
-    int Ls_in=12;
+    int Ls_in=8;
     double M5_in=1.8;
     double b5_in=1.5;
     double c5_in=0.5;
@@ -47,6 +47,12 @@ int main(int argc, char *argv[])
           if(std::string(argv[i]) == "-conf_number"){
             std::stringstream ss(argv[i+1]); ss >> conf_number_in;
             }
+          if(std::string(argv[i]) == "-ml"){
+            std::stringstream ss(argv[i+1]); ss >> ml_in;
+            }
+          if(std::string(argv[i]) == "-ms"){
+            std::stringstream ss(argv[i+1]); ss >> ms_in;
+            }
         }
     // Show additional input parameters
     LOG(Message) << "Ls = " << Ls_in << std::endl;
@@ -68,7 +74,7 @@ int main(int argc, char *argv[])
     // global parameters
     Application::GlobalPar globalPar;
     globalPar.trajCounter.start = conf_number_in;
-    globalPar.trajCounter.end   = conf_name_in + 1;
+    globalPar.trajCounter.end   = conf_number_in + 1;
     globalPar.trajCounter.step  = 1;
     globalPar.runId             = conf_name_in;
     application.setPar(globalPar);
