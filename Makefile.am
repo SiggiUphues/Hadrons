@@ -1,4 +1,4 @@
-SUBDIRS = Hadrons utilities tests
+SUBDIRS = Hadrons utilities tests my_mains
 
 bin_SCRIPTS = hadrons-config
 

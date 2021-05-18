@@ -50,17 +50,17 @@ AC_MSG_CHECKING([that a minimal Grid program compiles]);
 AC_LINK_IFELSE(
 	[AC_LANG_SOURCE([[
     #include <Grid/Grid.h>
-    
+
     using namespace Grid;
-    
+
     int main(int argc, char *argv[])
     {
         Grid_init(&argc, &argv);
         Grid_finalize();
-        
+
         return 0;
     }
-    
+
     ]])],
 	[AC_MSG_RESULT([yes])],
     [AC_MSG_RESULT([no])]
@@ -90,4 +90,5 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([Hadrons/Makefile])
 AC_CONFIG_FILES([utilities/Makefile])
 AC_CONFIG_FILES([tests/Makefile])
+AC_CONFIG_FILES([my_mains/Makefile])
 AC_OUTPUT
