@@ -3,10 +3,14 @@ AM_CXXFLAGS += -I$(top_srcdir)
 
 bin_PROGRAMS = \
   MDWF_TCorr \
-	MDWF_SCorr
+	MDWF_SCorr \
+	MDWF_Corr
 
 MDWF_TCorr_SOURCES = MDWF_TCorr.cpp
 MDWF_TCorr_LDADD   = -lHadrons -lGrid
 
 MDWF_SCorr_SOURCES = MDWF_SCorr.cpp
 MDWF_SCorr_LDADD   = -lHadrons -lGrid
+
+MDWF_Corr_SOURCES = MDWF_Corr.cpp
+MDWF_Corr_LDADD   = -lHadrons -lGrid
