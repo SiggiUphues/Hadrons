@@ -76,10 +76,10 @@ int main(int argc, char *argv[])
                   mres_in = true;
                   }
         }
-    if (!tdir_in && !sdir_in){
+    if (!tdir_in && !sdir_in && !mres_in){
       LOG(Message) << "You have to use at least -sdir or -tdir \
-      to set a direction for the contraction." << std::endl;
-      exit();
+      to set a direction for the contraction or -mres to calculate mres." << std::endl;
+      exit(0);
     }
     // Show additional input parameters
     LOG(Message) << "Ls = " << Ls_in << std::endl;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "c5 = " << c5_in << std::endl;
     //LOG(Message) << "ml = " << ml_in << std::endl;
     //LOG(Message) << "ms = " << ms_in << std::endl;
-    for (int i; i< flavour.size() ; i++){
+    for (int i = 0; i< flavour.size() ; i++){
       LOG(Message) << flavour[i] << " = " << mass[i] << std::endl;
     }
     LOG(Message) << "conf_path = " << path_conf_in << std::endl;
@@ -96,6 +96,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "conf_number = " << conf_number_in << std::endl;
     LOG(Message) << "calculate temporal correlator = " << tdir_in << std::endl;
     LOG(Message) << "calculate spatial correlator = " << sdir_in << std::endl;
+    LOG(Message) << "calculate residual mass = " << mres_in << std::endl;
 
 
 
@@ -133,9 +134,24 @@ int main(int argc, char *argv[])
     ptPar.position = "0 0 0 0";
     application.createModule<MSource::Point>("pt", ptPar);
     // sink
-    MSink::SPoint::Par ssinkPar;
-    ssinkPar.mom = "0 0 0";
-    application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+    //MSink::SPoint::Par ssinkPar;
+    //ssinkPar.mom = "0 0 0";
+    //application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+
+
+    if (tdir_in){
+         // sink for the temporal direction
+         MSink::Point::Par tsinkPar;
+         tsinkPar.mom = "0 0 0";
+         application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
+    }
+    if (sdir_in){
+         // sink for the spatial direction
+         MSink::SPoint::Par ssinkPar;
+         ssinkPar.mom = "0 0 0";
+         application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+    }
+
 
     // set fermion boundary conditions to be periodic space, antiperiodic time.
     std::string boundary = "1 1 1 -1";
@@ -178,12 +194,12 @@ int main(int argc, char *argv[])
 
            if (tdir_in){
               // sink for the temporal direction
-              MSink::Point::Par tsinkPar;
-              tsinkPar.mom = "0 0 0";
-              application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
+              // MSink::Point::Par tsinkPar;
+              // tsinkPar.mom = "0 0 0";
+              //application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
 
               //Contraction in the spatial direction
-              MContraction::Meson::Par mesPar;
+              MContraction::Meson::Par tmesPar;
 
               tmesPar.output  = "tmesons//pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
@@ -198,9 +214,9 @@ int main(int argc, char *argv[])
 
             if (sdir_in){
                 // sink for the spatial direction
-                MSink::SPoint::Par ssinkPar;
-                ssinkPar.mom = "0 0 0";
-                application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+                //MSink::SPoint::Par ssinkPar;
+                //ssinkPar.mom = "0 0 0";
+                //application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
 
                 //Contraction in the spatial direction
                 MContraction::SMeson::Par smesPar;
@@ -215,22 +231,20 @@ int main(int argc, char *argv[])
                                                               smesPar);
 
              }
-             // Calculate mres
-             if (mres_in){
-                 MContraction::WardIdentity::Par wardIdpar;
-                 wardIdpar.output = "wardidentity/ward_" + flavour[i] "_" + conf_name_in ;
-                 wardIdpar.prop = "Qpt_" + flavour[i];
-                 wardIdpar.action = "MobiusDWF_" + flavour[i];
-                 wardIdpar.source = "pt";
-                 wardIdpar.mass = mass[i];
-                 application.createModule<MContraction::WardIdentity>("ward_pt_"
-                                                                   + flavour[1],
-                                                                     wardIdpar)
-
-
-
-            }
         }
+        // Calculate mres
+        if (mres_in){
+            MContraction::WardIdentity::Par wardIdpar;
+            wardIdpar.output = "wardidentity/ward_pt_" + flavour[i] + "_" + conf_name_in ;
+            wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
+            wardIdpar.action = "MobiusDWF_" + flavour[i];
+            wardIdpar.source = "pt";
+            wardIdpar.mass = mass[i];
+            application.createModule<MContraction::WardIdentity>("ward_pt_"
+                                                                   + flavour[i],
+                                                                     wardIdpar);
+
+       }
     }
     // execution
     application.saveParameterFile("smeson_spectrum.xml");
