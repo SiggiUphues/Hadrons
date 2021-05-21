@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     double conf_number_in =  1000;
     bool tdir_in = false ;
     bool sdir_in = false ;
+    bool mres_in = false;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
@@ -70,6 +71,9 @@ int main(int argc, char *argv[])
               }
           if(std::string(argv[i]) == "-sdir"){
                   sdir_in = true;
+                  }
+          if(std::string(argv[i]) == "-mres"){
+                  mres_in = true;
                   }
         }
     if (!tdir_in && !sdir_in){
@@ -165,50 +169,69 @@ int main(int argc, char *argv[])
         quarkPar.source = "pt";
         application.createModule<MFermion::GaugeProp>("Qpt_" + flavour[i], quarkPar);
     }
+
     for (unsigned int i = 0; i < flavour.size(); ++i)
-    for (unsigned int j = i; j < flavour.size(); ++j)
     {
 
-    if (tdir){
-        // sink for the temporal direction
-        MSink::Point::Par tsinkPar;
-        tsinkPar.mom = "0 0 0";
-        application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
+        for (unsigned int j = i; j < flavour.size(); ++j)
+        {
 
-        //Contraction in the spatial direction
-        MContraction::Meson::Par mesPar;
+           if (tdir_in){
+              // sink for the temporal direction
+              MSink::Point::Par tsinkPar;
+              tsinkPar.mom = "0 0 0";
+              application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
 
-        tmesPar.output  = "tmesons/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
-        tmesPar.q1      = "Qpt_" + flavour[i];
-        tmesPar.q2      = "Qpt_" + flavour[j];
-        tmesPar.gammas  = "all";
-        tmesPar.sink    = "tsink";
-        application.createModule<MContraction::Meson>("tmeson_pt_"
-                                                      + flavour[i] + flavour[j],
-                                                      tmesPar);
-      }
+              //Contraction in the spatial direction
+              MContraction::Meson::Par mesPar;
 
-    if (sdir){
-        // sink for the spatial direction
-        MSink::SPoint::Par ssinkPar;
-        ssinkPar.mom = "0 0 0";
-        application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+              tmesPar.output  = "tmesons//pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+              tmesPar.q1      = "Qpt_" + flavour[i];
+              tmesPar.q2      = "Qpt_" + flavour[j];
+              tmesPar.gammas  = "all";
+              tmesPar.sink    = "tsink";
+              application.createModule<MContraction::Meson>("tmeson_pt_"
+                                                            + flavour[i] + flavour[j],
+                                                            tmesPar);
 
-        //Contraction in the spatial direction
-        MContraction::SMeson::Par smesPar;
+            }
 
-        smesPar.output  = "smesons/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
-        smesPar.q1      = "Qpt_" + flavour[i];
-        smesPar.q2      = "Qpt_" + flavour[j];
-        smesPar.gammas  = "all";
-        smesPar.sink    = "ssink";
-        application.createModule<MContraction::SMeson>("smeson_pt_"
-                                                      + flavour[i] + flavour[j],
-                                                      smesPar);
-      }
+            if (sdir_in){
+                // sink for the spatial direction
+                MSink::SPoint::Par ssinkPar;
+                ssinkPar.mom = "0 0 0";
+                application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
 
+                //Contraction in the spatial direction
+                MContraction::SMeson::Par smesPar;
+
+                smesPar.output  = "smesons/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+                smesPar.q1      = "Qpt_" + flavour[i];
+                smesPar.q2      = "Qpt_" + flavour[j];
+                smesPar.gammas  = "all";
+                smesPar.sink    = "ssink";
+                application.createModule<MContraction::SMeson>("smeson_pt_"
+                                                              + flavour[i] + flavour[j],
+                                                              smesPar);
+
+             }
+             // Calculate mres
+             if (mres_in){
+                 MContraction::WardIdentity::Par wardIdpar;
+                 wardIdpar.output = "wardidentity/ward_" + flavour[i] "_" + conf_name_in ;
+                 wardIdpar.prop = "Qpt_" + flavour[i];
+                 wardIdpar.action = "MobiusDWF_" + flavour[i];
+                 wardIdpar.source = "pt";
+                 wardIdpar.mass = mass[i];
+                 application.createModule<MContraction::WardIdentity>("ward_pt_"
+                                                                   + flavour[1],
+                                                                     wardIdpar)
+
+
+
+            }
+        }
     }
-
     // execution
     application.saveParameterFile("smeson_spectrum.xml");
     application.run();
