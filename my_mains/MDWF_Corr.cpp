@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
         MSolver::RBPrecCG::Par solverPar;
         solverPar.action       = "MobiusDWF_" + flavour[i];
         solverPar.residual     = 1.0e-16;
-        solverPar.maxIteration = 10000;
+        solverPar.maxIteration = 100000;
         application.createModule<MSolver::RBPrecCG>("CG_" + flavour[i],
                                                     solverPar);
 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
               //Contraction in the spatial direction
               MContraction::Meson::Par tmesPar;
 
-              tmesPar.output  = "tmesons//pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+              tmesPar.output  = "../data/tmesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
                 //Contraction in the spatial direction
                 MContraction::SMeson::Par smesPar;
 
-                smesPar.output  = "smesons/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+                smesPar.output  = "../data/smesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
-            wardIdpar.output = "wardidentity/ward_pt_" + flavour[i] + "_" + conf_name_in ;
+            wardIdpar.output = "../data/wardidentity/" + conf_name_in  +"/ward_pt_" + flavour[i] + "_" + conf_name_in ;
             wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
             wardIdpar.action = "MobiusDWF_" + flavour[i];
             wardIdpar.source = "pt";
