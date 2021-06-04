@@ -34,18 +34,23 @@ int main(int argc, char *argv[])
     bool tdir_in = false ;
     bool sdir_in = false ;
     bool mres_in = false;
+    std::string paramstring = "" ; // String to put all settings into the outputname
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
+            paramstring += "Ls" + to_string(Ls_in);
             }
           if(std::string(argv[i]) == "-M5"){
             std::stringstream ss(argv[i+1]); ss >> M5_in;
+            paramstring += "M5" + to_string(M5_in * 10);
             }
           if(std::string(argv[i]) == "-b5"){
             std::stringstream ss(argv[i+1]); ss >> b5_in;
+            paramstring += "b5" + to_string(b5_in * 10);
             }
           if(std::string(argv[i]) == "-c5"){
             std::stringstream ss(argv[i+1]); ss >> c5_in;
+            paramstring += "c5" + to_string(c5_in * 10);
             }
           if(std::string(argv[i]) == "-conf_name"){
             std::stringstream ss(argv[i+1]); ss >> conf_name_in;
@@ -57,11 +62,15 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> ml_in;
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
+            std:string tmp_ml = to_string(ml_in) ;
+            paramstring += "ml" + tmp_ml.substr(2);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
+            std:string tmp_ms = to_string(ms_in) ;
+            paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
@@ -86,6 +95,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "M5 = " << M5_in << std::endl;
     LOG(Message) << "b5 = " << b5_in << std::endl;
     LOG(Message) << "c5 = " << c5_in << std::endl;
+    LOG(Message) << "paramstring = " << paramstring << std::endl;
     //LOG(Message) << "ml = " << ml_in << std::endl;
     //LOG(Message) << "ms = " << ms_in << std::endl;
     for (int i = 0; i< flavour.size() ; i++){
@@ -220,6 +230,7 @@ int main(int argc, char *argv[])
 
                 //Contraction in the spatial direction
                 MContraction::SMeson::Par smesPar;
+
 
                 smesPar.output  = "../data/smesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
