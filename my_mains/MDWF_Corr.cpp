@@ -35,23 +35,28 @@ int main(int argc, char *argv[])
     bool sdir_in = false ;
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
+    std::string tmp_str ; // to tempolary storing strings
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
-            paramstring += "Ls" + to_string(Ls_in);
+            paramstring += "Ls" + std::to_string(Ls_in);
             }
           if(std::string(argv[i]) == "-M5"){
             std::stringstream ss(argv[i+1]); ss >> M5_in;
-            paramstring += "M5" + to_string(M5_in * 10);
+	    tmp_str = std::to_string(M5_in);
+            paramstring += "M" + tmp_str.substr(0,1) + tmp_str.substr(2,1);
             }
           if(std::string(argv[i]) == "-b5"){
             std::stringstream ss(argv[i+1]); ss >> b5_in;
-            paramstring += "b5" + to_string(b5_in * 10);
+	    tmp_str = std::to_string(b5_in);
+            paramstring += "b" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
             }
           if(std::string(argv[i]) == "-c5"){
             std::stringstream ss(argv[i+1]); ss >> c5_in;
-            paramstring += "c5" + to_string(c5_in * 10);
-            }
+	    tmp_str = std::to_string(c5_in);
+            paramstring += "c" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
+            
+	  }
           if(std::string(argv[i]) == "-conf_name"){
             std::stringstream ss(argv[i+1]); ss >> conf_name_in;
             }
@@ -62,15 +67,15 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> ml_in;
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
-            std:string tmp_ml = to_string(ml_in) ;
-            paramstring += "ml" + tmp_ml.substr(2);
+	    std::string tmp_ml = std::to_string(ml_in) ;
+            paramstring += "ml" + tmp_ml.substr(2,4);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
-            std:string tmp_ms = to_string(ms_in) ;
-            paramstring += "ms" + tmp_ms.substr(2);
+	    std::string tmp_ms = std::to_string(ms_in) ;
+            paramstring += "ms" + tmp_ms.substr(2,4);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
@@ -211,7 +216,8 @@ int main(int argc, char *argv[])
               //Contraction in the spatial direction
               MContraction::Meson::Par tmesPar;
 
-              tmesPar.output  = "../data/tmesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+              tmesPar.output  = "../data/tmesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
+                                 + paramstring + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
@@ -232,7 +238,8 @@ int main(int argc, char *argv[])
                 MContraction::SMeson::Par smesPar;
 
 
-                smesPar.output  = "../data/smesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_" + conf_name_in ;
+                smesPar.output  = "../data/smesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
+                                  + paramstring + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
@@ -246,7 +253,8 @@ int main(int argc, char *argv[])
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
-            wardIdpar.output = "../data/wardidentity/" + conf_name_in  +"/ward_pt_" + flavour[i] + "_" + conf_name_in ;
+            wardIdpar.output = "../data/wardidentity/" + conf_name_in  +"/ward_pt_" + flavour[i] + "_"
+                               + paramstring + "_" + conf_name_in ;
             wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
             wardIdpar.action = "MobiusDWF_" + flavour[i];
             wardIdpar.source = "pt";
