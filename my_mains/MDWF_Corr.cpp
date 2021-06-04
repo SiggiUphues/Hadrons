@@ -68,14 +68,14 @@ int main(int argc, char *argv[])
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
 	    std::string tmp_ml = std::to_string(ml_in) ;
-            paramstring += "ml" + tmp_ml.substr(2,4);
+            paramstring += "ml" + tmp_ml.substr(2,5);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
 	    std::string tmp_ms = std::to_string(ms_in) ;
-            paramstring += "ms" + tmp_ms.substr(2,4);
+            paramstring += "ms" + tmp_ms.substr(2,5);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
