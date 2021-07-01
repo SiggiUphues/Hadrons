@@ -29,6 +29,8 @@ int main(int argc, char *argv[])
     double ml_in=0.001;
     double ms_in=0.01;
     std::string path_conf_in = "" ;
+    std::string pre_folder_in = "" ;
+    bool pre_folder_set = false ;
     std::string conf_name_in="unit";
     double conf_number_in =  1000;
     bool tdir_in = false ;
@@ -60,6 +62,10 @@ int main(int argc, char *argv[])
           if(std::string(argv[i]) == "-conf_name"){
             std::stringstream ss(argv[i+1]); ss >> conf_name_in;
             }
+          if(std::string(argv[i]) == "-pre_folder"){
+            std::stringstream ss(argv[i+1]); ss >> pre_folder_in;
+	    pre_folder_set=true;
+            }
           if(std::string(argv[i]) == "-conf_number"){
             std::stringstream ss(argv[i+1]); ss >> conf_number_in;
             }
@@ -68,14 +74,14 @@ int main(int argc, char *argv[])
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
 	    std::string tmp_ml = std::to_string(ml_in) ;
-            paramstring += "ml" + tmp_ml.substr(2,5);
+            paramstring += "ml" + tmp_ml.substr(2,7);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
 	    std::string tmp_ms = std::to_string(ms_in) ;
-            paramstring += "ms" + tmp_ms.substr(2,5);
+            paramstring += "ms" + tmp_ms.substr(2,7);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
@@ -90,11 +96,14 @@ int main(int argc, char *argv[])
                   mres_in = true;
                   }
         }
-    if (!tdir_in && !sdir_in && !mres_in){
-      LOG(Message) << "You have to use at least -sdir or -tdir \
-      to set a direction for the contraction or -mres to calculate mres." << std::endl;
-      exit(0);
+    if (!pre_folder_set){
+        pre_folder_in = conf_name_in ;
     }
+   // if (!tdir_in && !sdir_in && !mres_in){
+   //   LOG(Message) << "You have to use at least -sdir or -tdir \
+   //   to set a direction for the contraction or -mres to calculate mres." << std::endl;
+   //   exit(0);
+   // }
     // Show additional input parameters
     LOG(Message) << "Ls = " << Ls_in << std::endl;
     LOG(Message) << "M5 = " << M5_in << std::endl;
@@ -109,6 +118,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "conf_path = " << path_conf_in << std::endl;
     LOG(Message) << "conf_name = " << conf_name_in << std::endl;
     LOG(Message) << "conf_number = " << conf_number_in << std::endl;
+    LOG(Message) << "pre_folder = " << pre_folder_in << std::endl;
     LOG(Message) << "calculate temporal correlator = " << tdir_in << std::endl;
     LOG(Message) << "calculate spatial correlator = " << sdir_in << std::endl;
     LOG(Message) << "calculate residual mass = " << mres_in << std::endl;
@@ -216,7 +226,7 @@ int main(int argc, char *argv[])
               //Contraction in the spatial direction
               MContraction::Meson::Par tmesPar;
 
-              tmesPar.output  = "../data/tmesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
+              tmesPar.output  = "../data/tmesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
                                  + paramstring + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
@@ -238,7 +248,7 @@ int main(int argc, char *argv[])
                 MContraction::SMeson::Par smesPar;
 
 
-                smesPar.output  = "../data/smesons/" + conf_name_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
+                smesPar.output  = "../data/smesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
                                   + paramstring + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
@@ -253,7 +263,7 @@ int main(int argc, char *argv[])
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
-            wardIdpar.output = "../data/wardidentity/" + conf_name_in  +"/ward_pt_" + flavour[i] + "_"
+            wardIdpar.output = "../data/wardidentity/" + pre_folder_in  +"/ward_pt_" + flavour[i] + "_"
                                + paramstring + "_" + conf_name_in ;
             wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
             wardIdpar.action = "MobiusDWF_" + flavour[i];
