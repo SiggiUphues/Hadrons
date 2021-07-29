@@ -73,15 +73,19 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> ml_in;
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
-	    std::string tmp_ml = std::to_string(ml_in) ;
-            paramstring += "ml" + tmp_ml.substr(2,7);
+            std::string tmp_ml = ss.str();
+            //std::string tmp_ml = std::to_string(ml_in) ;
+	    //LOG(Message) << "tmp_ml = " << tmp_ml << std::endl ;
+            //LOG(Message) << "tmp_ml_sub = " << tmp_ml.substr(2) << std::endl ;
+	    paramstring += "ml" + tmp_ml.substr(2);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
-	    std::string tmp_ms = std::to_string(ms_in) ;
-            paramstring += "ms" + tmp_ms.substr(2,7);
+	    //std::string tmp_ms = std::to_string(ms_in) ;
+            std::string tmp_ms = ss.str(); 
+	    paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
