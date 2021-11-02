@@ -28,6 +28,8 @@ int main(int argc, char *argv[])
     double c5_in=0.5;
     double ml_in=0.001;
     double ms_in=0.01;
+    double residual_in=1.0e-16;
+    double max_it_in=100000;
     std::string path_conf_in = "" ;
     std::string pre_folder_in = "" ;
     bool pre_folder_set = false ;
@@ -68,6 +70,12 @@ int main(int argc, char *argv[])
             }
           if(std::string(argv[i]) == "-conf_number"){
             std::stringstream ss(argv[i+1]); ss >> conf_number_in;
+            }
+          if(std::string(argv[i]) == "-residual"){
+            std::stringstream ss(argv[i+1]); ss >> residual_in;
+            }
+          if(std::string(argv[i]) == "-max-it"){
+            std::stringstream ss(argv[i+1]); ss >> max_it_in;
             }
           if(std::string(argv[i]) == "-ml"){
             std::stringstream ss(argv[i+1]); ss >> ml_in;
@@ -203,8 +211,8 @@ int main(int argc, char *argv[])
         // solvers
         MSolver::RBPrecCG::Par solverPar;
         solverPar.action       = "MobiusDWF_" + flavour[i];
-        solverPar.residual     = 1.0e-16;
-        solverPar.maxIteration = 100000;
+        solverPar.residual     = residual_in;
+        solverPar.maxIteration = max_it_in;
         application.createModule<MSolver::RBPrecCG>("CG_" + flavour[i],
                                                     solverPar);
 
