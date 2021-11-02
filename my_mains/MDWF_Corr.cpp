@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     // Set additional input parameters
     // default values
     std::vector<std::string> flavour;
+    std::vector<std::string> mass_str;
     std::vector<double>      mass;
     int Ls_in=8;
     double M5_in=1.8;
@@ -73,19 +74,21 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> ml_in;
             flavour.push_back("l") ;
             mass.push_back(ml_in) ;
-            std::string tmp_ml = ss.str();
+	    mass_str.push_back(ss.str());
+            //std::string tmp_ml = ss.str();
             //std::string tmp_ml = std::to_string(ml_in) ;
 	    //LOG(Message) << "tmp_ml = " << tmp_ml << std::endl ;
             //LOG(Message) << "tmp_ml_sub = " << tmp_ml.substr(2) << std::endl ;
-	    paramstring += "ml" + tmp_ml.substr(2);
+	    //paramstring += "ml" + tmp_ml.substr(2);
             }
           if(std::string(argv[i]) == "-ms"){
             std::stringstream ss(argv[i+1]); ss >> ms_in;
             flavour.push_back("s") ;
             mass.push_back(ms_in) ;
+	    mass_str.push_back(ss.str());
 	    //std::string tmp_ms = std::to_string(ms_in) ;
-            std::string tmp_ms = ss.str(); 
-	    paramstring += "ms" + tmp_ms.substr(2);
+            //std::string tmp_ms = ss.str(); 
+	    //paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
@@ -217,11 +220,18 @@ int main(int argc, char *argv[])
 
     for (unsigned int i = 0; i < flavour.size(); ++i)
     {
-
+        std::string paramstring_fin = "";
         for (unsigned int j = i; j < flavour.size(); ++j)
         {
+	    if( flavour[i] != flavour[j] ){
+	        paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + paramstring;
+	    }
+	    else{
+	        paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
+	    }
 
-           if (tdir_in){
+           
+	   if (tdir_in){
               // sink for the temporal direction
               // MSink::Point::Par tsinkPar;
               // tsinkPar.mom = "0 0 0";
@@ -231,7 +241,7 @@ int main(int argc, char *argv[])
               MContraction::Meson::Par tmesPar;
 
               tmesPar.output  = "../data/tmesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
-                                 + paramstring + "_" + conf_name_in ;
+                                 + paramstring_fin + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
@@ -253,7 +263,7 @@ int main(int argc, char *argv[])
 
 
                 smesPar.output  = "../data/smesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
-                                  + paramstring + "_" + conf_name_in ;
+                                  + paramstring_fin + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
@@ -264,11 +274,13 @@ int main(int argc, char *argv[])
 
              }
         }
+
+	paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
             wardIdpar.output = "../data/wardidentity/" + pre_folder_in  +"/ward_pt_" + flavour[i] + "_"
-                               + paramstring + "_" + conf_name_in ;
+                               + paramstring_fin + "_" + conf_name_in ;
             wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
             wardIdpar.action = "MobiusDWF_" + flavour[i];
             wardIdpar.source = "pt";
