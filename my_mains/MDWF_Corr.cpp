@@ -98,6 +98,15 @@ int main(int argc, char *argv[])
             //std::string tmp_ms = ss.str(); 
 	    //paramstring += "ms" + tmp_ms.substr(2);
             }
+          if(std::string(argv[i]) == "-mc"){
+            std::stringstream ss(argv[i+1]); ss >> ms_in;
+            flavour.push_back("c") ;
+            mass.push_back(ms_in) ;
+	    mass_str.push_back(ss.str());
+	    //std::string tmp_ms = std::to_string(ms_in) ;
+            //std::string tmp_ms = ss.str(); 
+	    //paramstring += "ms" + tmp_ms.substr(2);
+            }
           if(std::string(argv[i]) == "-path_conf"){
             std::stringstream ss(argv[i+1]); ss >> path_conf_in;
             }
