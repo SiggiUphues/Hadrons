@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     std::vector<double>      mass;
     int Ls_in=8;
     double M5_in=1.8;
-    double b5_in=1.5;
-    double c5_in=0.5;
+    double b5_in=1.50;
+    double c5_in=0.50;
     double ml_in=0.001;
     double ms_in=0.01;
     double residual_in=1.0e-16;
@@ -37,29 +37,43 @@ int main(int argc, char *argv[])
     std::string conf_name_in="unit";
     double conf_number_in =  1000;
     bool tdir_in = false ;
+    std::string tdir_mom_in = "0 0 0" ;
+    std::string mom_string = "";
     bool sdir_in = false ;
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
     std::string tmp_str ; // to tempolary storing strings
+    std::string str_M5 ; // strings which will be added to the paramstring 
+    std::string str_b5 ; 
+    std::string str_c5 ; 
+    LOG(Message) << "Before the for loop" << std::endl;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
-            paramstring += "Ls" + std::to_string(Ls_in);
+            //paramstring += "Ls" + std::to_string(Ls_in);
+            }
+          if(std::string(argv[i]) == "-tdir_mom"){
+            std::stringstream ss(argv[i+1]); tdir_mom_in = ss.str();
+                if(tdir_mom_in != "0 0 0"){
+                    std::string tmp_mom = tdir_mom_in ;
+                    tmp_mom.erase(std::remove(tmp_mom.begin(),tmp_mom.end(), ' '),tmp_mom.end());
+                    mom_string = "k" + tmp_mom;
+                }
             }
           if(std::string(argv[i]) == "-M5"){
             std::stringstream ss(argv[i+1]); ss >> M5_in;
-	    tmp_str = std::to_string(M5_in);
-            paramstring += "M" + tmp_str.substr(0,1) + tmp_str.substr(2,1);
+	    //tmp_str = std::to_string(M5_in);
+           // str_M5 = "M" + tmp_str.substr(0,1) + tmp_str.substr(2,1);
             }
           if(std::string(argv[i]) == "-b5"){
             std::stringstream ss(argv[i+1]); ss >> b5_in;
-	    tmp_str = std::to_string(b5_in);
-            paramstring += "b" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
+	    //tmp_str = std::to_string(b5_in);
+            //str_b5 = "b" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
             }
           if(std::string(argv[i]) == "-c5"){
             std::stringstream ss(argv[i+1]); ss >> c5_in;
-	    tmp_str = std::to_string(c5_in);
-            paramstring += "c" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
+	    //tmp_str = std::to_string(c5_in);
+            //str_c5 = "c" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
             
 	  }
           if(std::string(argv[i]) == "-conf_name"){
@@ -123,6 +137,22 @@ int main(int argc, char *argv[])
     if (!pre_folder_set){
         pre_folder_in = conf_name_in ;
     }
+
+   LOG(Message) << "After the for loop" << std::endl;
+   // set the one part of the outputname
+
+   str_M5 = std::to_string(M5_in);
+   str_M5 = "M" + str_M5.substr(0,1) + str_M5.substr(2,1);
+   str_b5 = std::to_string(b5_in);
+   str_b5 = "b" + str_b5.substr(0,1) + str_b5.substr(2,2);
+   str_c5 = std::to_string(c5_in);
+   str_c5 = "c" + str_c5.substr(0,1) + str_c5.substr(2,2);
+ 
+   paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;  
+   if( mom_string != ""){
+       paramstring += mom_string ;
+   }
+   LOG(Message) << "After paramstring is set" << std::endl;
    // if (!tdir_in && !sdir_in && !mres_in){
    //   LOG(Message) << "You have to use at least -sdir or -tdir \
    //   to set a direction for the contraction or -mres to calculate mres." << std::endl;
@@ -144,6 +174,7 @@ int main(int argc, char *argv[])
     LOG(Message) << "conf_number = " << conf_number_in << std::endl;
     LOG(Message) << "pre_folder = " << pre_folder_in << std::endl;
     LOG(Message) << "calculate temporal correlator = " << tdir_in << std::endl;
+    LOG(Message) << "momentum for temporal correlator = " << tdir_mom_in << std::endl;
     LOG(Message) << "calculate spatial correlator = " << sdir_in << std::endl;
     LOG(Message) << "calculate residual mass = " << mres_in << std::endl;
 
@@ -191,7 +222,7 @@ int main(int argc, char *argv[])
     if (tdir_in){
          // sink for the temporal direction
          MSink::Point::Par tsinkPar;
-         tsinkPar.mom = "0 0 0";
+         tsinkPar.mom = tdir_mom_in;
          application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
     }
     if (sdir_in){
