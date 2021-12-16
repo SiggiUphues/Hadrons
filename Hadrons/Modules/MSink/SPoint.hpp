@@ -131,6 +131,11 @@ void ZPoint<FImpl>::execute(void)
         ph = Zero();
         for(unsigned int mu = 0; mu < p.size(); mu++)
         {
+            // In the last iteration take the temporal component
+            // since this source is for a spatial correlator
+            if(mu == 2){
+                mu+=1;
+            }
             LatticeCoordinate(coor, mu);
             ph = ph + (p[mu]/env().getDim(mu))*coor;
         }
