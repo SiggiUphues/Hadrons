@@ -131,13 +131,17 @@ void ZPoint<FImpl>::execute(void)
         ph = Zero();
         for(unsigned int mu = 0; mu < p.size(); mu++)
         {
-            // In the last iteration take the temporal component
-            // since this source is for a spatial correlator
+            // if mu == 2 (z-direction) take the temporal component
+            // because we want p_x * x + p_y * y + p_t * t  
             if(mu == 2){
-                mu+=1;
+              LatticeCoordinate(coor, mu+1);
+              ph = ph + (p[mu]/env().getDim(mu+1))*coor;
+              LOG(Message) << "Index: " << mu+1 << " Dim_t = " << env().getDim(mu+1) << std::endl;
             }
-            LatticeCoordinate(coor, mu);
-            ph = ph + (p[mu]/env().getDim(mu))*coor;
+            else{
+                LatticeCoordinate(coor, mu);
+                ph = ph + (p[mu]/env().getDim(mu))*coor;
+              }
         }
         ph = exp((Real)(2*M_PI)*i*ph);
         hasPhase_ = true;
