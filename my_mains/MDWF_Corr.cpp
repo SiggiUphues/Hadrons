@@ -44,6 +44,8 @@ int main(int argc, char *argv[])
     std::string smom_string = "";
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
+    std::string tparamstring = "" ; // String to put all settings into the outputname for temporal corr
+    std::string sparamstring = "" ; // String to put all settings into the outputname fot spatial corr
     std::string tmp_str ; // to tempolary storing strings
     std::string str_M5 ; // strings which will be added to the paramstring 
     std::string str_b5 ; 
@@ -160,10 +162,10 @@ int main(int argc, char *argv[])
  
    paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;  
    if( tmom_string != ""){
-       std::string tparamstring = paramstring + tmom_string ;
+       tparamstring = paramstring + tmom_string ;
    }
    if( smom_string != ""){
-       std::string sparamstring = paramstring + smom_string ;
+       sparamstring = paramstring + smom_string ;
    }
    LOG(Message) << "After paramstring is set" << std::endl;
    // if (!tdir_in && !sdir_in && !mres_in){
