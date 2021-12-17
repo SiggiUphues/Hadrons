@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
     HadronsLogIterative.Active(GridLogIterative.isActive());
     HadronsLogDebug.Active(GridLogDebug.isActive());
     LOG(Message) << "Grid initialized" << std::endl;
-
+    unsigned int             Ns      = GridDefaultLatt()[Xp];
+    unsigned int             Nt      = GridDefaultLatt()[Tp];
     // Set additional input parameters
     // default values
     std::vector<std::string> flavour;
@@ -38,18 +39,14 @@ int main(int argc, char *argv[])
     double conf_number_in =  1000;
     bool tdir_in = false ;
     std::string tdir_mom_in = "0 0 0" ;
-    std::string tmom_string = "";
+    std::string mom_string = "";
     bool sdir_in = false ;
-    std::string sdir_mom_in = "0 0 0" ;
-    std::string smom_string = "";
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
-    std::string tparamstring = "" ; // String to put all settings into the outputname for temporal corr
-    std::string sparamstring = "" ; // String to put all settings into the outputname fot spatial corr
     std::string tmp_str ; // to tempolary storing strings
-    std::string str_M5 ; // strings which will be added to the paramstring 
-    std::string str_b5 ; 
-    std::string str_c5 ; 
+    std::string str_M5 ; // strings which will be added to the paramstring
+    std::string str_b5 ;
+    std::string str_c5 ;
     LOG(Message) << "Before the for loop" << std::endl;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
@@ -59,17 +56,9 @@ int main(int argc, char *argv[])
           if(std::string(argv[i]) == "-tdir_mom"){
             std::stringstream ss(argv[i+1]); tdir_mom_in = ss.str();
                 if(tdir_mom_in != "0 0 0"){
-                    std::string tmp_tmom = tdir_mom_in ;
-                    tmp_tmom.erase(std::remove(tmp_tmom.begin(),tmp_tmom.end(), ' '),tmp_tmom.end());
-                    tmom_string = "kt" + tmp_tmom;
-                }
-            }
-          if(std::string(argv[i]) == "-sdir_mom"){
-            std::stringstream ss(argv[i+1]); sdir_mom_in = ss.str();
-                if(sdir_mom_in != "0 0 0"){
-                    std::string tmp_smom = sdir_mom_in ;
-                    tmp_smom.erase(std::remove(tmp_smom.begin(),tmp_smom.end(), ' '),tmp_smom.end());
-                    smom_string = "ks" + tmp_smom;
+                    std::string tmp_mom = tdir_mom_in ;
+                    tmp_mom.erase(std::remove(tmp_mom.begin(),tmp_mom.end(), ' '),tmp_mom.end());
+                    mom_string = "k" + tmp_mom;
                 }
             }
           if(std::string(argv[i]) == "-M5"){
@@ -86,7 +75,7 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> c5_in;
 	    //tmp_str = std::to_string(c5_in);
             //str_c5 = "c" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
-            
+
 	  }
           if(std::string(argv[i]) == "-conf_name"){
             std::stringstream ss(argv[i+1]); ss >> conf_name_in;
@@ -121,7 +110,7 @@ int main(int argc, char *argv[])
             mass.push_back(ms_in) ;
 	    mass_str.push_back(ss.str());
 	    //std::string tmp_ms = std::to_string(ms_in) ;
-            //std::string tmp_ms = ss.str(); 
+            //std::string tmp_ms = ss.str();
 	    //paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-mc"){
@@ -130,7 +119,7 @@ int main(int argc, char *argv[])
             mass.push_back(ms_in) ;
 	    mass_str.push_back(ss.str());
 	    //std::string tmp_ms = std::to_string(ms_in) ;
-            //std::string tmp_ms = ss.str(); 
+            //std::string tmp_ms = ss.str();
 	    //paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-path_conf"){
@@ -159,13 +148,10 @@ int main(int argc, char *argv[])
    str_b5 = "b" + str_b5.substr(0,1) + str_b5.substr(2,2);
    str_c5 = std::to_string(c5_in);
    str_c5 = "c" + str_c5.substr(0,1) + str_c5.substr(2,2);
- 
-   paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;  
-   if( tmom_string != ""){
-       tparamstring = paramstring + tmom_string ;
-   }
-   if( smom_string != ""){
-       sparamstring = paramstring + smom_string ;
+
+   paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;
+   if( mom_string != ""){
+       paramstring += mom_string ;
    }
    LOG(Message) << "After paramstring is set" << std::endl;
    // if (!tdir_in && !sdir_in && !mres_in){
@@ -174,13 +160,13 @@ int main(int argc, char *argv[])
    //   exit(0);
    // }
     // Show additional input parameters
+    LOG(Message) << "Ns = " << Ns << std::endl;
+    LOG(Message) << "Nt = " << Nt << std::endl;
     LOG(Message) << "Ls = " << Ls_in << std::endl;
     LOG(Message) << "M5 = " << M5_in << std::endl;
     LOG(Message) << "b5 = " << b5_in << std::endl;
     LOG(Message) << "c5 = " << c5_in << std::endl;
     LOG(Message) << "paramstring = " << paramstring << std::endl;
-    LOG(Message) << "tparamstring = " << tparamstring << std::endl;
-    LOG(Message) << "sparamstring = " << sparamstring << std::endl;
     //LOG(Message) << "ml = " << ml_in << std::endl;
     //LOG(Message) << "ms = " << ms_in << std::endl;
     for (int i = 0; i< flavour.size() ; i++){
@@ -193,7 +179,6 @@ int main(int argc, char *argv[])
     LOG(Message) << "calculate temporal correlator = " << tdir_in << std::endl;
     LOG(Message) << "momentum for temporal correlator = " << tdir_mom_in << std::endl;
     LOG(Message) << "calculate spatial correlator = " << sdir_in << std::endl;
-    LOG(Message) << "momentum for spatial correlator = " << sdir_mom_in << std::endl;
     LOG(Message) << "calculate residual mass = " << mres_in << std::endl;
 
 
@@ -225,6 +210,7 @@ int main(int argc, char *argv[])
     {
        LOG(Message) << "Use unit configuration" << std::endl;
        application.createModule<MGauge::Unit>("gauge");
+       conf_name_in = conf_name_in + std::to_string(Ns) + std::to_string(Nt);
     }
 
     // sources
@@ -246,7 +232,7 @@ int main(int argc, char *argv[])
     if (sdir_in){
          // sink for the spatial direction
          MSink::SPoint::Par ssinkPar;
-         ssinkPar.mom = sdir_mom_in;
+         ssinkPar.mom = "0 0 0";
          application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
     }
 
@@ -286,20 +272,17 @@ int main(int argc, char *argv[])
 
     for (unsigned int i = 0; i < flavour.size(); ++i)
     {
-        std::string tparamstring_fin = "";
-        std::string sparamstring_fin = "";
+        std::string paramstring_fin = "";
         for (unsigned int j = i; j < flavour.size(); ++j)
         {
 	    if( flavour[i] != flavour[j] ){
-	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + tparamstring;
-	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + sparamstring;
+	        paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + paramstring;
 	    }
 	    else{
-	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + tparamstring ;
-	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + sparamstring ;
+	        paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
 	    }
 
-           
+
 	   if (tdir_in){
               // sink for the temporal direction
               // MSink::Point::Par tsinkPar;
@@ -310,7 +293,7 @@ int main(int argc, char *argv[])
               MContraction::Meson::Par tmesPar;
 
               tmesPar.output  = "../data/tmesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
-                                 + tparamstring_fin + "_" + conf_name_in ;
+                                 + paramstring_fin + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
@@ -332,7 +315,7 @@ int main(int argc, char *argv[])
 
 
                 smesPar.output  = "../data/smesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
-                                  + sparamstring_fin + "_" + conf_name_in ;
+                                  + paramstring_fin + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
@@ -344,12 +327,12 @@ int main(int argc, char *argv[])
              }
         }
 
-	tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + tparamstring ;
+	paramstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
             wardIdpar.output = "../data/wardidentity/" + pre_folder_in  +"/ward_pt_" + flavour[i] + "_"
-                               + tparamstring_fin + "_" + conf_name_in ;
+                               + paramstring_fin + "_" + conf_name_in ;
             wardIdpar.prop = "Qpt_" + flavour[i] +  "_5d";
             wardIdpar.action = "MobiusDWF_" + flavour[i];
             wardIdpar.source = "pt";
