@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
     HadronsLogIterative.Active(GridLogIterative.isActive());
     HadronsLogDebug.Active(GridLogDebug.isActive());
     LOG(Message) << "Grid initialized" << std::endl;
-
+    unsigned int             Ns      = GridDefaultLatt()[Xp];
+    unsigned int             Nt      = GridDefaultLatt()[Tp];
     // Set additional input parameters
     // default values
     std::vector<std::string> flavour;
@@ -177,6 +178,8 @@ int main(int argc, char *argv[])
    //   exit(0);
    // }
     // Show additional input parameters
+    LOG(Message) << "Ns = " << Ns << std::endl;
+    LOG(Message) << "Nt = " << Nt << std::endl;
     LOG(Message) << "Ls = " << Ls_in << std::endl;
     LOG(Message) << "M5 = " << M5_in << std::endl;
     LOG(Message) << "b5 = " << b5_in << std::endl;
@@ -228,6 +231,7 @@ int main(int argc, char *argv[])
     {
        LOG(Message) << "Use unit configuration" << std::endl;
        application.createModule<MGauge::Unit>("gauge");
+       conf_name_in = conf_name_in + std::to_string(Ns) + std::to_string(Nt);
     }
 
     // sources
