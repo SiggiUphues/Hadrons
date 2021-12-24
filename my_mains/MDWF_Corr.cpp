@@ -41,40 +41,42 @@ int main(int argc, char *argv[])
     std::string conf_name_in="unit";
     double conf_number_in =  1000;
     bool tdir_in = false ;
-    std::string tdir_mom_in = "0 0 0" ;
-    std::string tmom_string = "";
+    std::string tdir_mom_low = "0 0 0" ;
+    std::string tdir_mom_up = "0 0 0" ;
+    std::vector<unsigned int> tmom_low;
+    std::vector<unsigned int> tmom_up;
+
     bool sdir_in = false ;
-    std::string sdir_mom_in = "0 0 0" ;
-    std::string smom_string = "";
+    std::string sdir_mom_low = "0 0 0" ;
+    std::string sdir_mom_up = "0 0 0" ;
+    std::vector<unsigned int> smom_low;
+    std::vector<unsigned int> smom_up;
+
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
-    std::string tparamstring = "" ; // String to put all settings into the outputname for temporal corr
-    std::string sparamstring = "" ; // String to put all settings into the outputname fot spatial corr
     std::string tmp_str ; // to tempolary storing strings
-    std::string str_M5 ; // strings which will be added to the paramstring 
-    std::string str_b5 ; 
-    std::string str_c5 ; 
+    std::string str_M5 ; // strings which will be added to the paramstring
+    std::string str_b5 ;
+    std::string str_c5 ;
     LOG(Message) << "Before the for loop" << std::endl;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
             //paramstring += "Ls" + std::to_string(Ls_in);
             }
-          if(std::string(argv[i]) == "-tdir_mom"){
-            std::stringstream ss(argv[i+1]); tdir_mom_in = ss.str();
-                if(tdir_mom_in != "0 0 0"){
-                    std::string tmp_tmom = tdir_mom_in ;
-                    tmp_tmom.erase(std::remove(tmp_tmom.begin(),tmp_tmom.end(), ' '),tmp_tmom.end());
-                    tmom_string = "kt" + tmp_tmom;
-                }
+          if(std::string(argv[i]) == "-tdir_lowmom"){
+            std::stringstream ss(argv[i+1]); tdir_mom_low = ss.str();
             }
-          if(std::string(argv[i]) == "-sdir_mom"){
-            std::stringstream ss(argv[i+1]); sdir_mom_in = ss.str();
-                if(sdir_mom_in != "0 0 0"){
-                    std::string tmp_smom = sdir_mom_in ;
-                    tmp_smom.erase(std::remove(tmp_smom.begin(),tmp_smom.end(), ' '),tmp_smom.end());
-                    smom_string = "ks" + tmp_smom;
-                }
+          if(std::string(argv[i]) == "-tdir_upmom"){
+            std::stringstream ss(argv[i+1]); tdir_mom_up = ss.str();
+            }
+
+          if(std::string(argv[i]) == "-sdir_lowmom"){
+            std::stringstream ss(argv[i+1]); sdir_mom_low = ss.str();
+            }
+          if(std::string(argv[i]) == "-sdir-upmom"){
+            std::stringstream ss(argv[i+1]); sdir_mom_up = ss.str();
+
             }
           if(std::string(argv[i]) == "-M5"){
             std::stringstream ss(argv[i+1]); ss >> M5_in;
@@ -90,7 +92,7 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> c5_in;
 	    //tmp_str = std::to_string(c5_in);
             //str_c5 = "c" + tmp_str.substr(0,1) + tmp_str.substr(2,2);
-            
+
 	  }
           if(std::string(argv[i]) == "-conf_name"){
             std::stringstream ss(argv[i+1]); ss >> conf_name_in;
@@ -125,7 +127,7 @@ int main(int argc, char *argv[])
             mass.push_back(ms_in) ;
 	    mass_str.push_back(ss.str());
 	    //std::string tmp_ms = std::to_string(ms_in) ;
-            //std::string tmp_ms = ss.str(); 
+            //std::string tmp_ms = ss.str();
 	    //paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-mc"){
@@ -134,7 +136,7 @@ int main(int argc, char *argv[])
             mass.push_back(mc_in) ;
 	    mass_str.push_back(ss.str());
 	    //std::string tmp_ms = std::to_string(ms_in) ;
-            //std::string tmp_ms = ss.str(); 
+            //std::string tmp_ms = ss.str();
 	    //paramstring += "ms" + tmp_ms.substr(2);
             }
           if(std::string(argv[i]) == "-path_conf"){
@@ -163,14 +165,9 @@ int main(int argc, char *argv[])
    str_b5 = "b" + str_b5.substr(0,1) + str_b5.substr(2,2);
    str_c5 = std::to_string(c5_in);
    str_c5 = "c" + str_c5.substr(0,1) + str_c5.substr(2,2);
- 
-   paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;  
-   if( tmom_string != ""){
-       tparamstring = paramstring + tmom_string ;
-   }
-   if( smom_string != ""){
-       sparamstring = paramstring + smom_string ;
-   }
+
+   paramstring= "Ls" + std::to_string(Ls_in) + str_b5 + str_c5 + str_M5 ;
+
    LOG(Message) << "After paramstring is set" << std::endl;
    // if (!tdir_in && !sdir_in && !mres_in){
    //   LOG(Message) << "You have to use at least -sdir or -tdir \
@@ -185,10 +182,6 @@ int main(int argc, char *argv[])
     LOG(Message) << "b5 = " << b5_in << std::endl;
     LOG(Message) << "c5 = " << c5_in << std::endl;
     LOG(Message) << "paramstring = " << paramstring << std::endl;
-    LOG(Message) << "tparamstring = " << tparamstring << std::endl;
-    LOG(Message) << "sparamstring = " << sparamstring << std::endl;
-    //LOG(Message) << "ml = " << ml_in << std::endl;
-    //LOG(Message) << "ms = " << ms_in << std::endl;
     for (int i = 0; i< flavour.size() ; i++){
       LOG(Message) << flavour[i] << " = " << mass[i] << std::endl;
     }
@@ -197,9 +190,9 @@ int main(int argc, char *argv[])
     LOG(Message) << "conf_number = " << conf_number_in << std::endl;
     LOG(Message) << "pre_folder = " << pre_folder_in << std::endl;
     LOG(Message) << "calculate temporal correlator = " << tdir_in << std::endl;
-    LOG(Message) << "momentum for temporal correlator = " << tdir_mom_in << std::endl;
+    LOG(Message) << "momentum fof temporal correlator goes from " << tdir_mom_low << " up to " << tdir_mom_up << std::endl;
     LOG(Message) << "calculate spatial correlator = " << sdir_in << std::endl;
-    LOG(Message) << "momentum for spatial correlator = " << sdir_mom_in << std::endl;
+    LOG(Message) << "momentum of spatial correlator goes from " << sdir_mom_low << " up to " << sdir_mom_up << std::endl;
     LOG(Message) << "calculate residual mass = " << mres_in << std::endl;
 
 
@@ -238,29 +231,18 @@ int main(int argc, char *argv[])
     MSource::Point::Par ptPar;
     ptPar.position = "0 0 0 0";
     application.createModule<MSource::Point>("pt", ptPar);
-    // sink
-    //MSink::SPoint::Par ssinkPar;
-    //ssinkPar.mom = "0 0 0";
-    //application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
-
-
-    if (tdir_in){
-         // sink for the temporal direction
-         MSink::Point::Par tsinkPar;
-         tsinkPar.mom = tdir_mom_in;
-         application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
-    }
-    if (sdir_in){
-         // sink for the spatial direction
-         MSink::SPoint::Par ssinkPar;
-         ssinkPar.mom = sdir_mom_in;
-         application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
-    }
 
 
     // set fermion boundary conditions to be periodic space, antiperiodic time.
     std::string boundary = "1 1 1 -1";
     std::string twist = "0. 0. 0. 0.";
+
+    // convert momenta strings to vectors
+    tmom_low = strToVec<unsigned int>(tdir_mom_low);
+    tmom_up  = strToVec<unsigned int>(tdir_mom_up);
+    smom_low = strToVec<unsigned int>(sdir_mom_low);
+    smom_up  = strToVec<unsigned int>(sdir_mom_up);
+
 
     for (unsigned int i = 0; i < flavour.size(); ++i)
     {
@@ -298,22 +280,41 @@ int main(int argc, char *argv[])
         for (unsigned int j = i; j < flavour.size(); ++j)
         {
 	    if( flavour[i] != flavour[j] ){
-	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + tparamstring;
-	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + sparamstring;
+	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + paramstring;
+	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + "m" + flavour[j] + mass_str[j].substr(2) + paramstring;
 	    }
 	    else{
-	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + tparamstring ;
-	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + sparamstring ;
+	        tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
+	        sparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
 	    }
 
-           
-	   if (tdir_in){
-              // sink for the temporal direction
-              // MSink::Point::Par tsinkPar;
-              // tsinkPar.mom = "0 0 0";
-              //application.createModule<MSink::ScalarPoint>("tsink", tsinkPar);
 
-              //Contraction in the spatial direction
+	   if (tdir_in){
+       for (unsingned int kt_x = tmom_low[0];kt_x < tmom_up[0] +1 ; kt_x++)
+       {
+       for (unsingned int kt_y = tmom_low[1];kt_x < tmom_up[1] +1 ; kt_y++)
+       {
+       for (unsingned int kt_z = tmom_low[2];kt_z < tmom_up[2] +1 ; kt_z++)
+       {
+              std::string tmom_string = "";
+              std::string tdir_mom_in = std::to_string(kt_x) + " " + std::to_string(kt_y) + " " + std::to_string(kt_z);
+
+              if(tdir_mom_in != "0 0 0"){
+                  std::string tmp_tmom = tdir_mom_in ;
+                  tmp_tmom.erase(std::remove(tmp_tmom.begin(),tmp_tmom.end(), ' '),tmp_tmom.end());
+                  tmom_string = "kt" + tmp_tmom;
+              }
+
+              if( tmom_string != ""){
+                  tparamstring_fin = tparamstring_fin + tmom_string ;
+              }
+
+              // sink for the temporal direction
+              MSink::Point::Par tsinkPar;
+              tsinkPar.mom = tdir_mom_in;
+              application.createModule<MSink::ScalarPoint>("tsink" + tmom_string, tsinkPar);
+
+              //Contraction in the temporal direction
               MContraction::Meson::Par tmesPar;
 
               tmesPar.output  = "../data/tmesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
@@ -321,18 +322,40 @@ int main(int argc, char *argv[])
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
-              tmesPar.sink    = "tsink";
+              tmesPar.sink    = "tsink" + tmom_string;
               application.createModule<MContraction::Meson>("tmeson_pt_"
-                                                            + flavour[i] + flavour[j],
+                                                            + flavour[i] + flavour[j] + tmom_string,
                                                             tmesPar);
 
-            }
+      }
+      }
+      }
+    }
 
             if (sdir_in){
+              for (unsingned int ks_x = smom_low[0];ks_x < smom_up[0] +1 ; ks_x++)
+              {
+              for (unsingned int ks_y = smom_low[1];ks_x < smom_up[1] +1 ; ks_y++)
+              {
+              for (unsingned int ks_t = smom_low[2];ks_t < smom_up[2] +1 ; ks_t++)
+              {
+                std::string smom_string = "";
+                std::string sdir_mom_in = std::to_string(ks_x) + " " + std::to_string(ks_y) + " " + std::to_string(ks_t);
+
+                if(sdir_mom_in != "0 0 0"){
+                   std::string tmp_smom = sdir_mom_in ;
+                   tmp_smom.erase(std::remove(tmp_smom.begin(),tmp_smom.end(), ' '),tmp_smom.end());
+                   smom_string = "ks" + tmp_smom;
+                }
+
+                if( smom_string != ""){
+                   sparamstring_fin = sparamstring_fin + smom_string ;
+                }
+
                 // sink for the spatial direction
-                //MSink::SPoint::Par ssinkPar;
-                //ssinkPar.mom = "0 0 0";
-                //application.createModule<MSink::ScalarSPoint>("ssink", ssinkPar);
+                MSink::SPoint::Par ssinkPar;
+                ssinkPar.mom = sdir_mom_in;
+                application.createModule<MSink::ScalarSPoint>("ssink" + smom_string, ssinkPar);
 
                 //Contraction in the spatial direction
                 MContraction::SMeson::Par smesPar;
@@ -343,15 +366,17 @@ int main(int argc, char *argv[])
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
-                smesPar.sink    = "ssink";
+                smesPar.sink    = "ssink" + smom_string;
                 application.createModule<MContraction::SMeson>("smeson_pt_"
-                                                              + flavour[i] + flavour[j],
+                                                              + flavour[i] + flavour[j] + smom_string,
                                                               smesPar);
-
+               }
+               }
+               }
              }
         }
 
-	tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + tparamstring ;
+	tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
         // Calculate mres
         if (mres_in){
             MContraction::WardIdentity::Par wardIdpar;
