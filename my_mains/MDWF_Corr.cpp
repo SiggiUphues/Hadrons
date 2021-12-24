@@ -64,14 +64,14 @@ int main(int argc, char *argv[])
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
             //paramstring += "Ls" + std::to_string(Ls_in);
             }
-          if(std::string(argv[i]) == "-tdir_lowmom"){
+          if(std::string(argv[i]) == "-tdir-lowmom"){
             std::stringstream ss(argv[i+1]); tdir_mom_low = ss.str();
             }
-          if(std::string(argv[i]) == "-tdir_upmom"){
+          if(std::string(argv[i]) == "-tdir-upmom"){
             std::stringstream ss(argv[i+1]); tdir_mom_up = ss.str();
             }
 
-          if(std::string(argv[i]) == "-sdir_lowmom"){
+          if(std::string(argv[i]) == "-sdir-lowmom"){
             std::stringstream ss(argv[i+1]); sdir_mom_low = ss.str();
             }
           if(std::string(argv[i]) == "-sdir-upmom"){
@@ -273,6 +273,7 @@ int main(int argc, char *argv[])
         application.createModule<MFermion::GaugeProp>("Qpt_" + flavour[i], quarkPar);
     }
 
+    bool first_time = true;
     for (unsigned int i = 0; i < flavour.size(); ++i)
     {
         std::string tparamstring_fin = "";
@@ -290,9 +291,11 @@ int main(int argc, char *argv[])
 
 
 	   if (tdir_in){
+            //LOG(Message) << tmom_low[0] <<  tmom_low[1] << tmom_low[2] << std::endl;
+            //LOG(Message) << tmom_up[0] <<  tmom_up[1] << tmom_up[2] << std::endl;
        for (unsigned int kt_x = tmom_low[0];kt_x < tmom_up[0] +1 ; kt_x++)
        {
-       for (unsigned int kt_y = tmom_low[1];kt_x < tmom_up[1] +1 ; kt_y++)
+       for (unsigned int kt_y = tmom_low[1];kt_y < tmom_up[1] +1 ; kt_y++)
        {
        for (unsigned int kt_z = tmom_low[2];kt_z < tmom_up[2] +1 ; kt_z++)
        {
@@ -305,20 +308,22 @@ int main(int argc, char *argv[])
                   tmom_string = "kt" + tmp_tmom;
               }
 
-              if( tmom_string != ""){
-                  tparamstring_fin = tparamstring_fin + tmom_string ;
-              }
+              //if( tmom_string != ""){
+              //    tparamstring_fin = tparamstring_fin + tmom_string ;
+              //}
 
               // sink for the temporal direction
-              MSink::Point::Par tsinkPar;
-              tsinkPar.mom = tdir_mom_in;
-              application.createModule<MSink::ScalarPoint>("tsink" + tmom_string, tsinkPar);
-
+              if(first_time){          
+                LOG(Message) << "Create tsink with kt = " << tmom_string << std::endl;
+                MSink::Point::Par tsinkPar;
+                tsinkPar.mom = tdir_mom_in;
+                application.createModule<MSink::ScalarPoint>("tsink" + tmom_string, tsinkPar);
+              }
               //Contraction in the temporal direction
               MContraction::Meson::Par tmesPar;
 
               tmesPar.output  = "../data/tmesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_t_"
-                                 + tparamstring_fin + "_" + conf_name_in ;
+                                 + tparamstring_fin + tmom_string + "_" + conf_name_in ;
               tmesPar.q1      = "Qpt_" + flavour[i];
               tmesPar.q2      = "Qpt_" + flavour[j];
               tmesPar.gammas  = "all";
@@ -329,13 +334,15 @@ int main(int argc, char *argv[])
 
       }
       }
-      }
+      }      
     }
 
             if (sdir_in){
+            //LOG(Message) << smom_low[0] <<  smom_low[1] << smom_low[2] << std::endl;
+            //LOG(Message) << smom_up[0] <<  smom_up[1] << smom_up[2] << std::endl;
               for (unsigned int ks_x = smom_low[0];ks_x < smom_up[0] +1 ; ks_x++)
               {
-              for (unsigned int ks_y = smom_low[1];ks_x < smom_up[1] +1 ; ks_y++)
+              for (unsigned int ks_y = smom_low[1];ks_y < smom_up[1] +1 ; ks_y++)
               {
               for (unsigned int ks_t = smom_low[2];ks_t < smom_up[2] +1 ; ks_t++)
               {
@@ -348,21 +355,23 @@ int main(int argc, char *argv[])
                    smom_string = "ks" + tmp_smom;
                 }
 
-                if( smom_string != ""){
-                   sparamstring_fin = sparamstring_fin + smom_string ;
-                }
+                //if( smom_string != ""){
+                //   sparamstring_fin = sparamstring_fin + smom_string ;
+                //}
 
                 // sink for the spatial direction
-                MSink::SPoint::Par ssinkPar;
-                ssinkPar.mom = sdir_mom_in;
-                application.createModule<MSink::ScalarSPoint>("ssink" + smom_string, ssinkPar);
-
+                if(first_time){
+                  LOG(Message) << "Create ssink with ks = " << smom_string << std::endl;
+                  MSink::SPoint::Par ssinkPar;
+                  ssinkPar.mom = sdir_mom_in;
+                  application.createModule<MSink::ScalarSPoint>("ssink" + smom_string, ssinkPar);
+                }
                 //Contraction in the spatial direction
                 MContraction::SMeson::Par smesPar;
 
 
                 smesPar.output  = "../data/smesons/" + pre_folder_in  + "/pt_" + flavour[i] + flavour[j] + "_s_"
-                                  + sparamstring_fin + "_" + conf_name_in ;
+                                  + sparamstring_fin + smom_string  + "_" + conf_name_in ;
                 smesPar.q1      = "Qpt_" + flavour[i];
                 smesPar.q2      = "Qpt_" + flavour[j];
                 smesPar.gammas  = "all";
@@ -374,6 +383,7 @@ int main(int argc, char *argv[])
                }
                }
              }
+        first_time = false;
         }
 
 	tparamstring_fin= "m" + flavour[i] + mass_str[i].substr(2) + paramstring ;
