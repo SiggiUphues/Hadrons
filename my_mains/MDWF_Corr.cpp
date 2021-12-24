@@ -290,11 +290,11 @@ int main(int argc, char *argv[])
 
 
 	   if (tdir_in){
-       for (unsingned int kt_x = tmom_low[0];kt_x < tmom_up[0] +1 ; kt_x++)
+       for (unsigned int kt_x = tmom_low[0];kt_x < tmom_up[0] +1 ; kt_x++)
        {
-       for (unsingned int kt_y = tmom_low[1];kt_x < tmom_up[1] +1 ; kt_y++)
+       for (unsigned int kt_y = tmom_low[1];kt_x < tmom_up[1] +1 ; kt_y++)
        {
-       for (unsingned int kt_z = tmom_low[2];kt_z < tmom_up[2] +1 ; kt_z++)
+       for (unsigned int kt_z = tmom_low[2];kt_z < tmom_up[2] +1 ; kt_z++)
        {
               std::string tmom_string = "";
               std::string tdir_mom_in = std::to_string(kt_x) + " " + std::to_string(kt_y) + " " + std::to_string(kt_z);
@@ -333,11 +333,11 @@ int main(int argc, char *argv[])
     }
 
             if (sdir_in){
-              for (unsingned int ks_x = smom_low[0];ks_x < smom_up[0] +1 ; ks_x++)
+              for (unsigned int ks_x = smom_low[0];ks_x < smom_up[0] +1 ; ks_x++)
               {
-              for (unsingned int ks_y = smom_low[1];ks_x < smom_up[1] +1 ; ks_y++)
+              for (unsigned int ks_y = smom_low[1];ks_x < smom_up[1] +1 ; ks_y++)
               {
-              for (unsingned int ks_t = smom_low[2];ks_t < smom_up[2] +1 ; ks_t++)
+              for (unsigned int ks_t = smom_low[2];ks_t < smom_up[2] +1 ; ks_t++)
               {
                 std::string smom_string = "";
                 std::string sdir_mom_in = std::to_string(ks_x) + " " + std::to_string(ks_y) + " " + std::to_string(ks_t);
