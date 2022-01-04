@@ -43,14 +43,14 @@ int main(int argc, char *argv[])
     bool tdir_in = false ;
     std::string tdir_mom_low = "0.0.0" ;
     std::string tdir_mom_up = "0.0.0" ;
-    std::vector<unsigned int> tmom_low;
-    std::vector<unsigned int> tmom_up;
+    std::vector<int> tmom_low;
+    std::vector<int> tmom_up;
 
     bool sdir_in = false ;
     std::string sdir_mom_low = "0.0.0" ;
     std::string sdir_mom_up = "0.0.0" ;
-    std::vector<unsigned int> smom_low;
-    std::vector<unsigned int> smom_up;
+    std::vector<int> smom_low;
+    std::vector<int> smom_up;
 
     bool mres_in = false;
     std::string paramstring = "" ; // String to put all settings into the outputname
