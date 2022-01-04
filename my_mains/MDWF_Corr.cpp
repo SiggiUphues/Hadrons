@@ -41,14 +41,14 @@ int main(int argc, char *argv[])
     std::string conf_name_in="unit";
     double conf_number_in =  1000;
     bool tdir_in = false ;
-    std::string tdir_mom_low = "0 0 0" ;
-    std::string tdir_mom_up = "0 0 0" ;
+    std::string tdir_mom_low = "0.0.0" ;
+    std::string tdir_mom_up = "0.0.0" ;
     std::vector<unsigned int> tmom_low;
     std::vector<unsigned int> tmom_up;
 
     bool sdir_in = false ;
-    std::string sdir_mom_low = "0 0 0" ;
-    std::string sdir_mom_up = "0 0 0" ;
+    std::string sdir_mom_low = "0.0.0" ;
+    std::string sdir_mom_up = "0.0.0" ;
     std::vector<unsigned int> smom_low;
     std::vector<unsigned int> smom_up;
 
@@ -58,26 +58,40 @@ int main(int argc, char *argv[])
     std::string str_M5 ; // strings which will be added to the paramstring
     std::string str_b5 ;
     std::string str_c5 ;
+
+    if( GridCmdOptionExists(argv,argv+argc,"-tdir-lowmom") ){
+        tdir_mom_low= GridCmdOptionPayload(argv,argv+argc,"-tdir-lowmom");
+    }
+    if( GridCmdOptionExists(argv,argv+argc,"-tdir-upmom") ){
+        tdir_mom_up= GridCmdOptionPayload(argv,argv+argc,"-tdir-upmom");
+    }
+    if( GridCmdOptionExists(argv,argv+argc,"-sdir-lowmom") ){
+        sdir_mom_low= GridCmdOptionPayload(argv,argv+argc,"-sdir-lowmom");
+    }
+    if( GridCmdOptionExists(argv,argv+argc,"-sdir-upmom") ){
+        sdir_mom_up= GridCmdOptionPayload(argv,argv+argc,"-sdir-upmom");
+    }
+
     LOG(Message) << "Before the for loop" << std::endl;
     for(int i=0;i<argc;i++){
           if(std::string(argv[i]) == "-Ls"){
             std::stringstream ss(argv[i+1]); ss >> Ls_in;
             //paramstring += "Ls" + std::to_string(Ls_in);
             }
-          if(std::string(argv[i]) == "-tdir-lowmom"){
-            std::stringstream ss(argv[i+1]); tdir_mom_low = ss.str();
-            }
-          if(std::string(argv[i]) == "-tdir-upmom"){
-            std::stringstream ss(argv[i+1]); tdir_mom_up = ss.str();
-            }
+          //if(std::string(argv[i]) == "-tdir-lowmom"){
+          //  std::stringstream ss(argv[i+1]); tdir_mom_low = ss.str();
+          //  }
+          //if(std::string(argv[i]) == "-tdir-upmom"){
+          //  std::stringstream ss(argv[i+1]); tdir_mom_up = ss.str();
+          //  }
 
-          if(std::string(argv[i]) == "-sdir-lowmom"){
-            std::stringstream ss(argv[i+1]); sdir_mom_low = ss.str();
-            }
-          if(std::string(argv[i]) == "-sdir-upmom"){
-            std::stringstream ss(argv[i+1]); sdir_mom_up = ss.str();
+          //if(std::string(argv[i]) == "-sdir-lowmom"){
+          //  std::stringstream ss(argv[i+1]); sdir_mom_low = ss.str();
+          //  }
+          //if(std::string(argv[i]) == "-sdir-upmom"){
+          //  std::stringstream ss(argv[i+1]); sdir_mom_up = ss.str();
 
-            }
+          //  }
           if(std::string(argv[i]) == "-M5"){
             std::stringstream ss(argv[i+1]); ss >> M5_in;
 	    //tmp_str = std::to_string(M5_in);
@@ -238,10 +252,34 @@ int main(int argc, char *argv[])
     std::string twist = "0. 0. 0. 0.";
 
     // convert momenta strings to vectors
-    tmom_low = strToVec<unsigned int>(tdir_mom_low);
-    tmom_up  = strToVec<unsigned int>(tdir_mom_up);
-    smom_low = strToVec<unsigned int>(sdir_mom_low);
-    smom_up  = strToVec<unsigned int>(sdir_mom_up);
+    //tmom_low = strToVec<unsigned int>(tdir_mom_low);
+    //tmom_up  = strToVec<unsigned int>(tdir_mom_up);
+    //smom_low = strToVec<unsigned int>(sdir_mom_low);
+    //smom_up  = strToVec<unsigned int>(sdir_mom_up);
+    GridCmdOptionIntVector(tdir_mom_low,tmom_low);
+    GridCmdOptionIntVector(tdir_mom_up,tmom_up);
+    GridCmdOptionIntVector(sdir_mom_low,smom_low);
+    GridCmdOptionIntVector(sdir_mom_up,smom_up);
+
+    //check if vectors have the right size
+    if( tmom_low.size() != 3 ){
+        std::cout << "The size of --tdir-lowmom has to be 3 and not " << tmom_low.size() << std::endl;
+        exit(0);
+    }
+    if( tmom_up.size() != 3 ){
+        std::cout << "The size of --tdir-upmom has to be 3 and not " << tmom_up.size() << std::endl;
+        exit(0);
+    }
+    if( smom_low.size() != 3 ){
+        std::cout << "The size of --sdir-lowmom has to be 3 and not " << smom_low.size() << std::endl;
+        exit(0);
+    }
+    if( smom_up.size() != 3 ){
+        std::cout << "The size of --sdir-upmom has to be 3 and not " << smom_up.size() << std::endl;
+        exit(0);
+    }
+
+
 
 
     for (unsigned int i = 0; i < flavour.size(); ++i)
@@ -313,7 +351,7 @@ int main(int argc, char *argv[])
               //}
 
               // sink for the temporal direction
-              if(first_time){          
+              if(first_time){
                 LOG(Message) << "Create tsink with kt = " << tmom_string << std::endl;
                 MSink::Point::Par tsinkPar;
                 tsinkPar.mom = tdir_mom_in;
@@ -334,7 +372,7 @@ int main(int argc, char *argv[])
 
       }
       }
-      }      
+      }
     }
 
             if (sdir_in){
