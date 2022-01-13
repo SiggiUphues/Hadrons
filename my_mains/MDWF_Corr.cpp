@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 
     double residual_in=1.0e-16;
     double max_it_in=100000;
+    bool   err_on_no_conv=true;
     std::string path_conf_in = "" ;
     std::string pre_folder_in = "" ;
     bool pre_folder_set = false ;
@@ -121,6 +122,9 @@ int main(int argc, char *argv[])
           if(std::string(argv[i]) == "-residual"){
             std::stringstream ss(argv[i+1]); ss >> residual_in;
             }
+          if(std::string(argv[i]) == "-noerr_on_no_conv"){
+              err_on_no_conv = false;
+              }
           if(std::string(argv[i]) == "-max-it"){
             std::stringstream ss(argv[i+1]); ss >> max_it_in;
             }
@@ -301,6 +305,7 @@ int main(int argc, char *argv[])
         solverPar.action       = "MobiusDWF_" + flavour[i];
         solverPar.residual     = residual_in;
         solverPar.maxIteration = max_it_in;
+        solverPar.err_on_no_conv = err_on_no_conv;
         application.createModule<MSolver::RBPrecCG>("CG_" + flavour[i],
                                                     solverPar);
 

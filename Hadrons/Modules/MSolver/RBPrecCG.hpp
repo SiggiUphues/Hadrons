@@ -49,7 +49,7 @@ public:
                                     std::string , action,
                                     unsigned int, maxIteration,
                                     double      , residual,
-                                    bool        , err_on_no_conv = true,
+                                    bool        , err_on_no_conv,
                                     std::string , eigenPack);
 };
 
