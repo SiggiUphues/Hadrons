@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Hadrons.  If not, see <http://www.gnu.org/licenses/>.
  *
- * See the full license in the file "LICENSE" in the top level distribution 
+ * See the full license in the file "LICENSE" in the top level distribution
  * directory.
  */
 
@@ -49,6 +49,7 @@ public:
                                     std::string , action,
                                     unsigned int, maxIteration,
                                     double      , residual,
+                                    bool        , err_on_no_conv = true,
                                     std::string , eigenPack);
 };
 
@@ -91,7 +92,7 @@ template <typename FImpl, int nBasis>
 std::vector<std::string> TRBPrecCG<FImpl, nBasis>::getInput(void)
 {
     std::vector<std::string> in = {};
-    
+
     return in;
 }
 
@@ -99,7 +100,7 @@ template <typename FImpl, int nBasis>
 std::vector<std::string> TRBPrecCG<FImpl, nBasis>::getReference(void)
 {
     std::vector<std::string> ref = {par().action};
-    
+
     if (!par().eigenPack.empty())
     {
         ref.push_back(par().eigenPack);
@@ -112,7 +113,7 @@ template <typename FImpl, int nBasis>
 std::vector<std::string> TRBPrecCG<FImpl, nBasis>::getOutput(void)
 {
     std::vector<std::string> out = {getName(), getName() + "_subtract"};
-    
+
     return out;
 }
 
@@ -127,7 +128,7 @@ void TRBPrecCG<FImpl, nBasis>::setup(void)
 
     LOG(Message) << "setting up Schur red-black preconditioned CG for"
                  << " action '" << par().action << "' with residual "
-                 << par().residual << ", maximum iteration " 
+                 << par().residual << ", maximum iteration "
                  << par().maxIteration << std::endl;
 
     auto Ls        = env().getObjectLs(par().action);
@@ -138,7 +139,7 @@ void TRBPrecCG<FImpl, nBasis>::setup(void)
         return [&mat, guesserPt, subGuess, this](FermionField &sol,
                                      const FermionField &source) {
             ConjugateGradient<FermionField> cg(par().residual,
-                                               par().maxIteration);
+                                               par().maxIteration, par().err_on_no_conv);
             HADRONS_DEFAULT_SCHUR_SOLVE<FermionField> schurSolver(cg);
             schurSolver.subtractGuess(subGuess);
             schurSolver(mat, source, sol, *guesserPt);
